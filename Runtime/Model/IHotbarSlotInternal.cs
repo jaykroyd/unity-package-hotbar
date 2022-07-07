@@ -2,8 +2,8 @@
 {
     internal interface IHotbarSlotInternal : IHotbarSlot
     {
-        void Register(IUsable _usable);
-        void Unregister();
+        IUsable Usable { get; set; }
+
         void Use();
     }
 }

@@ -30,7 +30,7 @@ namespace Elysium.Hotbar
             }
         }
 
-        private UnityLogger logger = default;
+        private IUnityLogger logger = default;
         private Config config = default;
         private IHotbarRowInternal[] rows = default;
 
@@ -38,27 +38,27 @@ namespace Elysium.Hotbar
 
         public event UnityAction OnValueChanged;
 
-        public Hotbar(UnityLogger _logger, Config _config)
+        public Hotbar(IUnityLogger _logger, Config _config)
         {
             this.logger = _logger;
             this.config = _config;
             CreateHotbarRows(_config.NumOfRows, _config.NumOfSlots);
         }
 
-        public void Register(Vector2Int _index,  IUsable _usable)
+        public void SetUsable(Vector2Int _index,  IUsable _usable)
         {
             if (TryGetSlotByIndex(_index, out IHotbarSlotInternal slot))
             {
-                slot.Register(_usable);
+                slot.Usable = _usable;
                 OnValueChanged?.Invoke();
             }
         }
         
-        public void Unregister(Vector2Int _index)
+        public void UnsetUsable(Vector2Int _index)
         {
             if (TryGetSlotByIndex(_index, out IHotbarSlotInternal slot))
             {
-                slot.Unregister();
+                slot.Usable = new NullUsable();
                 OnValueChanged?.Invoke();
             }
         }
@@ -71,12 +71,23 @@ namespace Elysium.Hotbar
             }
         }
 
+        public void Swap(Vector2Int _indexOne, Vector2Int _indexTwo)
+        {
+            if (TryGetSlotByIndex(_indexOne, out IHotbarSlotInternal slotOne) && TryGetSlotByIndex(_indexTwo, out IHotbarSlotInternal slotTwo))
+            {
+                IUsable firstUsable = slotOne.Usable;
+                IUsable secondUsable = slotTwo.Usable;
+                SetUsable(_indexOne, secondUsable);
+                SetUsable(_indexTwo, firstUsable);
+            }
+        }
+
         private void CreateHotbarRows(int _rows, int _slotsPerRow)
         {
             rows = new IHotbarRowInternal[_rows];
             for (int i = 0; i < _rows; i++)
             {
-                rows[i] = new HotbarRow(logger, i+1, _slotsPerRow);
+                rows[i] = new HotbarRow(logger, i + 1, _slotsPerRow);
             }
             OnValueChanged?.Invoke();
         }

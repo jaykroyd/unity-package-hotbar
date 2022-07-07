@@ -6,7 +6,7 @@ namespace Elysium.Hotbar
 {
     public class HotbarRow : IHotbarRowInternal
     {
-        private UnityLogger logger = default;
+        private IUnityLogger logger = default;
         private IHotbarSlotInternal[] slots = default;
         private int index = default;
 
@@ -14,7 +14,7 @@ namespace Elysium.Hotbar
         IEnumerable<IHotbarSlotInternal> IHotbarRowInternal.Slots => slots;
         IEnumerable<IHotbarSlot> IHotbarRow.Slots => slots;
 
-        public HotbarRow(UnityLogger _logger, int _index, int _slots)
+        public HotbarRow(IUnityLogger _logger, int _index, int _slots)
         {
             this.logger = _logger;
             this.index = _index;

@@ -6,30 +6,27 @@ namespace Elysium.Hotbar
 {
     public class HotbarSlot : IHotbarSlotInternal
     {
-        private UnityLogger logger = default;
+        private IUnityLogger logger = default;
         private Vector2Int index = default;
         private IUsable usable = default;
 
+        public Sprite Icon => usable.Icon;
         public Vector2Int Index => index;
+        public bool CanUse => !(usable is NullUsable);
+        IUsable IHotbarSlotInternal.Usable 
+        { 
+            get => usable;
+            set => usable = value != null ? value : new NullUsable(); 
+        }        
 
-        public HotbarSlot(UnityLogger _logger, Vector2Int _index)
+        public HotbarSlot(IUnityLogger _logger, Vector2Int _index)
         {
             this.logger = _logger;
             this.index = _index;
             this.usable = new NullUsable();
         }
 
-        void IHotbarSlotInternal.Register(IUsable _usable)
-        {
-            this.usable = _usable;
-        }
-
-        void IHotbarSlotInternal.Unregister()
-        {
-            this.usable = new NullUsable();
-        }
-
-        void IHotbarSlotInternal.Use()
+        public void Use()
         {
             logger.Log($"Hotbar slot {index.x}-{index.y} was clicked");
             this.usable.Use();

@@ -4,8 +4,7 @@ namespace Elysium.Hotbar
 {
     public interface IHotbarPresenter
     {
-        event UnityAction OnShow;
-        event UnityAction OnHide;
-        event UnityAction OnChanged;
+        void Show();
+        void Hide();
     }
 }
